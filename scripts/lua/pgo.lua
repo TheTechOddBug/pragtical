@@ -54,6 +54,13 @@ if os.getenv("SDL_VIDEO_DRIVER") == "dummy" then
   end
 end
 
+-- Force redraw on each yield to ensure things keep active
+local coroutine_yield = coroutine.yield
+function coroutine.yield(...)
+  core.redraw = true
+  coroutine_yield(...)
+end
+
 ---Helper for the fetch resource function.
 ---@param curl process
 ---@param callback? fun(percent,total,dowloaded,speed,left,elapsed)
@@ -514,7 +521,6 @@ local start_time = os.time()
 core.add_background_thread(function()
   while true do
     -- allow to keep running even if unfocus
-    core.redraw = true
     coroutine.yield(1)
     if os.time() - start_time >= 5 * 60 then
       print "Maximum pgo stress time exceeded, quitting..."
@@ -525,7 +531,7 @@ core.add_background_thread(function()
 end)
 
 -- Main Entry Point
-core.add_thread(function()
+core.add_background_thread(function()
   local start_time = system.get_time()
 
   local sqlite_path = CWD .. PATHSEP .. "sqlite3.c"

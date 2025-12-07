@@ -70,6 +70,8 @@ jobs:
     env:
       CC: gcc
       CXX: g++
+      LLVM_PROFILE_FILE: default.profraw
+      SDL_VIDEO_DRIVER: dummy
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -77,7 +79,6 @@ jobs:
       - name: Set Environment Variables
         run: |
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          echo "/usr/lib/ccache" >> "$GITHUB_PATH"
           echo "INSTALL_REF=${{ needs.release.outputs.version }}" >> "$GITHUB_ENV"
       - name: Python Setup
         uses: actions/setup-python@v5
@@ -100,7 +101,6 @@ jobs:
         run: sudo apt-get update
       - name: Install Dependencies
         run: |
-          sudo apt-get install -y ccache
           bash scripts/install-dependencies.sh --debug
       - name: Build Portable
         run: bash scripts/build.sh --debug --forcefallback --portable --lto --pgo
