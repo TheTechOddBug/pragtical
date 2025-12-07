@@ -52,6 +52,7 @@ if os.getenv("SDL_VIDEO_DRIVER") == "dummy" then
     core_log(text, ...)
     print(string.format(text, ...))
   end
+  core.log("Overwritten core.log for cli output.")
 end
 
 -- Force redraw on each yield to ensure things keep active
@@ -517,6 +518,8 @@ end
 ---------------------------End of Rotating Cube Code----------------------------
 
 -- Max execution time check (allow a maximum of 5 minutes to prevent endless CI)
+core.redraw = true
+
 local start_time = os.time()
 core.add_background_thread(function()
   while true do
